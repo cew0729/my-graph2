@@ -247,3 +247,69 @@ st.text_area(
     height=140,
     key="histogram_graph_observation"
 )
+st.divider()
+
+# 네 번째 그래프: 개봉일 스크린수와 총 관객의 관계
+st.header("4. 개봉일 스크린수와 총 관객의 관계")
+
+scatter_data = df[
+    ["movieNm", "genre_first", "first_scrn", "total_audi"]
+].copy()
+
+scatter_data["first_scrn"] = pd.to_numeric(
+    scatter_data["first_scrn"],
+    errors="coerce"
+)
+
+scatter_data["total_audi"] = pd.to_numeric(
+    scatter_data["total_audi"],
+    errors="coerce"
+)
+
+scatter_data = scatter_data.dropna(
+    subset=["first_scrn", "total_audi"]
+)
+
+fig4 = px.scatter(
+    scatter_data,
+    x="first_scrn",
+    y="total_audi",
+    color="genre_first",
+    hover_name="movieNm",
+    hover_data={
+        "first_scrn": ":,",
+        "total_audi": ":,",
+        "genre_first": True
+    },
+    title="개봉일 스크린수와 총 관객의 관계",
+    labels={
+        "first_scrn": "개봉일 스크린수",
+        "total_audi": "총 관객",
+        "genre_first": "장르"
+    }
+)
+
+fig4.update_traces(
+    marker=dict(size=10, opacity=0.7)
+)
+
+fig4.update_layout(
+    xaxis_title="개봉일 스크린수",
+    yaxis_title="총 관객",
+    margin=dict(t=70, b=30, l=20, r=20)
+)
+
+st.plotly_chart(fig4, use_container_width=True)
+
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+
+st.write(
+    "개봉일 스크린수와 총 관객 사이의 관계를 살펴보고, "
+    "장르별 영화의 분포와 특성을 비교할 수 있습니다."
+)
+
+st.text_area(
+    "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+    placeholder="여기에 자유롭게 작성해 보세요.",
+    height=140,
+    key="scatter_graph
