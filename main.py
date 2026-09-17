@@ -312,4 +312,4 @@ st.text_area(
     "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
     placeholder="여기에 자유롭게 작성해 보세요.",
     height=140,
-    key="scatter_graph
+    key="scatter_graph_observation"
