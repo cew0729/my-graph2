@@ -101,11 +101,11 @@ try:
         margin=dict(t=70, b=30, l=20, r=20)
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
 
-   st.caption("여기에 자유롭게 작성해 보세요.")
+st.caption("여기에 자유롭게 작성해 보세요.")
 
 st.text_area(
     "장르별 영화 수와 전체 영화에서 차지하는 비율을 알 수 있다.",
