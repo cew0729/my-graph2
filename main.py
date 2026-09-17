@@ -174,3 +174,76 @@ st.text_area(
     height=140,
     key="treemap_graph_observation"
 )
+st.divider()
+
+# 세 번째 그래프: 총 관객 히스토그램
+st.header("3. 총 관객 분포")
+
+hist_data = df[["movieNm", "total_audi"]].copy()
+hist_data["total_audi"] = pd.to_numeric(
+    hist_data["total_audi"],
+    errors="coerce"
+)
+
+hist_data = hist_data.dropna(subset=["total_audi"])
+hist_data = hist_data[hist_data["total_audi"] > 0]
+
+fig3 = px.histogram(
+    hist_data,
+    x="total_audi",
+    nbins=20,
+    title="영화별 총 관객 분포",
+    labels={
+        "total_audi": "총 관객",
+        "count": "영화 편수"
+    }
+)
+
+fig3.update_layout(
+    xaxis_title="총 관객",
+    yaxis_title="영화 편수",
+    bargap=0.05,
+    margin=dict(t=70, b=30, l=20, r=20)
+)
+
+st.plotly_chart(fig3, use_container_width=True)
+
+# 대부분의 영화가 몰려 있는 구간 계산
+counts, bins = pd.cut(
+    hist_data["total_audi"],
+    bins=20,
+    retbins=True
+)
+
+bin_counts = counts.value_counts().sort_index()
+most_common_bin = bin_counts.idxmax()
+
+lower_bound = most_common_bin.left
+upper_bound = most_common_bin.right
+
+# 총 관객이 가장 많은 영화
+most_popular_movie = hist_data.loc[
+    hist_data["total_audi"].idxmax()
+]
+
+movie_name = most_popular_movie["movieNm"]
+movie_audience = int(most_popular_movie["total_audi"])
+
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+
+st.write(
+    f"대부분의 영화는 총 관객 약 "
+    f"{lower_bound:,.0f}명~{upper_bound:,.0f}명 구간에 몰려 있습니다."
+)
+
+st.write(
+    f"총 관객이 가장 많은 영화는 **{movie_name}**이며, "
+    f"총 관객은 **{movie_audience:,}명**입니다."
+)
+
+st.text_area(
+    "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+    placeholder="여기에 자유롭게 작성해 보세요.",
+    height=140,
+    key="histogram_graph_observation"
+)
