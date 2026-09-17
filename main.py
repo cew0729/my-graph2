@@ -97,9 +97,9 @@ try:
     )
 
     fig.update_layout(
-        legend_title_text="장르",
-        margin=dict(t=70, b=30, l=20, r=20)
-    )
+    legend_title_text="장르",
+    margin=dict(t=70, b=30, l=20, r=20)
+)
 
 st.plotly_chart(fig, use_container_width=True)
 
