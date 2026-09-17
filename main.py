@@ -105,9 +105,13 @@ try:
 
     st.markdown("#### 💡 이 그래프로 알 수 있는 것")
 
-    st.text_area(
-        "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
-        placeholder="여기에 자유롭게 작성해 보세요.",
+   st.caption("여기에 자유롭게 작성해 보세요.")
+
+st.text_area(
+    "장르별 영화 수와 전체 영화에서 차지하는 비율을 알 수 있다.",
+    height=140,
+    key="scatter_graph_observation"
+)
         height=140,
         key="genre_graph_observation"
     )
