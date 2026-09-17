@@ -110,11 +110,8 @@ st.caption("여기에 자유롭게 작성해 보세요.")
 st.text_area(
     "장르별 영화 수와 전체 영화에서 차지하는 비율을 알 수 있다.",
     height=140,
-    key="scatter_graph_observation"
+    key="genre_graph_observation"
 )
-        height=140,
-        key="genre_graph_observation"
-    )
 
 except Exception as e:
     st.error("데이터를 불러오는 중 오류가 발생했습니다.")
