@@ -115,3 +115,62 @@ try:
 except Exception as e:
     st.error("데이터를 불러오는 중 오류가 발생했습니다.")
     st.code(str(e))
+    st.divider()
+
+# 두 번째 그래프: 장르별 영화 트리맵
+st.header("2. 장르별 영화 총 관객 트리맵")
+
+treemap_data = df[
+    ["genre_first", "movieNm", "total_audi"]
+].copy()
+
+treemap_data["movieNm"] = (
+    treemap_data["movieNm"]
+    .fillna("영화명 미상")
+    .astype(str)
+)
+
+treemap_data["total_audi"] = pd.to_numeric(
+    treemap_data["total_audi"],
+    errors="coerce"
+)
+
+treemap_data = treemap_data.dropna(subset=["total_audi"])
+treemap_data = treemap_data[treemap_data["total_audi"] > 0]
+
+fig2 = px.treemap(
+    treemap_data,
+    path=["genre_first", "movieNm"],
+    values="total_audi",
+    color="genre_first",
+    title="장르 안에 포함된 영화별 총 관객 규모",
+    labels={
+        "genre_first": "장르",
+        "movieNm": "영화명",
+        "total_audi": "총 관객"
+    },
+    custom_data=["movieNm", "total_audi"]
+)
+
+fig2.update_traces(
+    hovertemplate=(
+        "<b>영화명: %{customdata[0]}</b><br>"
+        "총 관객: %{customdata[1]:,}명"
+        "<extra></extra>"
+    )
+)
+
+fig2.update_layout(
+    margin=dict(t=70, b=30, l=20, r=20)
+)
+
+st.plotly_chart(fig2, use_container_width=True)
+
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+
+st.text_area(
+    "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+    placeholder="여기에 자유롭게 작성해 보세요.",
+    height=140,
+    key="treemap_graph_observation"
+)
