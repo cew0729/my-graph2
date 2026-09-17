@@ -313,3 +313,4 @@ st.text_area(
     placeholder="여기에 자유롭게 작성해 보세요.",
     height=140,
     key="scatter_graph_observation"
+)
