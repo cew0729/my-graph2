@@ -530,3 +530,77 @@ st.text_area(
     height=140,
     key="sunburst_graph_observation"
 )
+st.divider()
+
+# 일곱 번째 그래프: 제작 국가 → 장르 선버스트 그래프
+st.header("7. 제작 국가별 장르 분포")
+
+sunburst_data = df[
+    ["nation", "genre_first"]
+].copy()
+
+sunburst_data["nation"] = (
+    sunburst_data["nation"]
+    .fillna("미상")
+    .astype(str)
+    .str.strip()
+    .replace("", "미상")
+)
+
+sunburst_data["genre_first"] = (
+    sunburst_data["genre_first"]
+    .fillna("미상")
+    .astype(str)
+    .str.strip()
+    .replace("", "미상")
+)
+
+# 제작 국가와 장르별 영화 편수 계산
+sunburst_counts = (
+    sunburst_data
+    .groupby(["nation", "genre_first"])
+    .size()
+    .reset_index(name="영화 편수")
+)
+
+fig7 = px.sunburst(
+    sunburst_counts,
+    path=["nation", "genre_first"],
+    values="영화 편수",
+    title="제작 국가에서 장르로 내려가는 영화 편수 분포",
+    labels={
+        "nation": "제작 국가",
+        "genre_first": "장르",
+        "영화 편수": "영화 편수"
+    }
+)
+
+fig7.update_traces(
+    hovertemplate=(
+        "<b>%{label}</b><br>"
+        "영화 편수: %{value}편"
+        "<extra></extra>"
+    )
+)
+
+fig7.update_layout(
+    margin=dict(t=70, b=30, l=20, r=20)
+)
+
+st.plotly_chart(fig7, use_container_width=True)
+
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+
+st.write(
+    "제작 국가별 영화 편수와 각 국가의 장르 구성을 한눈에 비교할 수 있습니다. "
+    "칸의 크기가 클수록 해당 국가 또는 장르의 영화 편수가 많습니다."
+)
+
+st.caption("국가를 클릭하면 해당 국가의 장르별 구성을 자세히 볼 수 있습니다.")
+
+st.text_area(
+    "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+    placeholder="여기에 자유롭게 작성해 보세요.",
+    height=140,
+    key="sunburst_graph_observation"
+)
