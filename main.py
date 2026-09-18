@@ -97,26 +97,25 @@ try:
     )
 
     fig.update_layout(
-    legend_title_text="장르",
-    margin=dict(t=70, b=30, l=20, r=20)
-)
+        legend_title_text="장르",
+        margin=dict(t=70, b=30, l=20, r=20)
+    )
 
-st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
 
-st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+    st.markdown("#### 💡 이 그래프로 알 수 있는 것")
 
-st.caption("여기에 자유롭게 작성해 보세요.")
-
-st.text_area(
-    "장르별 영화 수와 전체 영화에서 차지하는 비율을 알 수 있다.",
-    height=140,
-    key="genre_graph_observation"
-)
+    st.text_area(
+        "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+        placeholder="여기에 자유롭게 작성해 보세요.",
+        height=140,
+        key="genre_graph_observation"
+    )
 
 except Exception as e:
     st.error("데이터를 불러오는 중 오류가 발생했습니다.")
     st.code(str(e))
-    st.divider()
+st.divider()
 
 # 두 번째 그래프: 장르별 영화 트리맵
 st.header("2. 장르별 영화 총 관객 트리맵")
