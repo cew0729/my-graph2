@@ -314,3 +314,219 @@ st.text_area(
     height=140,
     key="scatter_graph_observation"
 )
+st.divider()
+
+# 다섯 번째 그래프: 장르별 총 관객 상자 그림
+st.header("5. 장르별 총 관객 분포")
+
+box_data = df[
+    ["movieNm", "genre_first", "total_audi"]
+].copy()
+
+box_data["total_audi"] = pd.to_numeric(
+    box_data["total_audi"],
+    errors="coerce"
+)
+
+box_data = box_data.dropna(
+    subset=["genre_first", "total_audi"]
+)
+
+# 영화가 10편 이상인 장르만 선택
+genre_movie_counts = box_data["genre_first"].value_counts()
+
+selected_genres = genre_movie_counts[
+    genre_movie_counts >= 10
+].index
+
+box_data = box_data[
+    box_data["genre_first"].isin(selected_genres)
+]
+
+fig5 = px.box(
+    box_data,
+    x="genre_first",
+    y="total_audi",
+    color="genre_first",
+    points="outliers",
+    hover_name="movieNm",
+    hover_data={
+        "genre_first": True,
+        "total_audi": ":,",
+        "movieNm": True
+    },
+    title="영화가 10편 이상인 장르별 총 관객 분포",
+    labels={
+        "genre_first": "장르",
+        "total_audi": "총 관객",
+        "movieNm": "영화명"
+    }
+)
+
+fig5.update_layout(
+    xaxis_title="장르",
+    yaxis_title="총 관객",
+    showlegend=False,
+    margin=dict(t=70, b=30, l=20, r=20)
+)
+
+st.plotly_chart(fig5, use_container_width=True)
+
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+
+st.write(
+    "영화가 10편 이상인 장르별 총 관객의 중앙값과 분포를 비교할 수 있습니다. "
+    "상자 밖의 점은 다른 영화보다 총 관객이 특별히 높거나 낮은 영화입니다."
+)
+
+st.caption("상자 밖의 점에 마우스를 올리면 영화명을 확인할 수 있습니다.")
+
+st.text_area(
+    "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+    placeholder="여기에 자유롭게 작성해 보세요.",
+    height=140,
+    key="boxplot_graph_observation"
+)
+st.divider()
+
+# 여섯 번째 그래프: 첫 주 관객을 점 크기로 표시한 버블 그래프
+st.header("6. 첫 주 관객을 반영한 버블 그래프")
+
+bubble_data = df[
+    ["movieNm", "genre_first", "first_scrn", "total_audi", "first_week_audi"]
+].copy()
+
+for column in ["first_scrn", "total_audi", "first_week_audi"]:
+    bubble_data[column] = pd.to_numeric(
+        bubble_data[column],
+        errors="coerce"
+    )
+
+bubble_data = bubble_data.dropna(
+    subset=["first_scrn", "total_audi", "first_week_audi"]
+)
+
+bubble_data = bubble_data[
+    bubble_data["first_week_audi"] > 0
+]
+
+fig6 = px.scatter(
+    bubble_data,
+    x="first_scrn",
+    y="total_audi",
+    size="first_week_audi",
+    color="genre_first",
+    hover_name="movieNm",
+    hover_data={
+        "first_scrn": ":,",
+        "total_audi": ":,",
+        "first_week_audi": ":,",
+        "genre_first": True
+    },
+    size_max=55,
+    opacity=0.7,
+    title="첫 주 관객에 따른 개봉일 스크린수와 총 관객의 관계",
+    labels={
+        "first_scrn": "개봉일 스크린수",
+        "total_audi": "총 관객",
+        "first_week_audi": "첫 주 관객",
+        "genre_first": "장르"
+    }
+)
+
+fig6.update_layout(
+    xaxis_title="개봉일 스크린수",
+    yaxis_title="총 관객",
+    margin=dict(t=70, b=30, l=20, r=20)
+)
+
+st.plotly_chart(fig6, use_container_width=True)
+
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+
+st.write(
+    "버블의 크기는 첫 주 관객 수를 나타냅니다. "
+    "개봉일 스크린수, 첫 주 관객, 총 관객 사이의 관계를 함께 비교할 수 있습니다."
+)
+
+st.caption("버블에 마우스를 올리면 영화명과 관객 수를 확인할 수 있습니다.")
+
+st.text_area(
+    "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+    placeholder="여기에 자유롭게 작성해 보세요.",
+    height=140,
+    key="bubble_graph_observation"
+)
+
+# 일곱 번째 그래프: 제작 국가 → 장르 선버스트 그래프
+st.header("7. 제작 국가별 장르 분포")
+
+sunburst_data = df[
+    ["nation", "genre_first"]
+].copy()
+
+sunburst_data["nation"] = (
+    sunburst_data["nation"]
+    .fillna("미상")
+    .astype(str)
+    .str.strip()
+    .replace("", "미상")
+)
+
+sunburst_data["genre_first"] = (
+    sunburst_data["genre_first"]
+    .fillna("미상")
+    .astype(str)
+    .str.strip()
+    .replace("", "미상")
+)
+
+# 제작 국가와 장르별 영화 편수 계산
+sunburst_counts = (
+    sunburst_data
+    .groupby(["nation", "genre_first"])
+    .size()
+    .reset_index(name="영화 편수")
+)
+
+fig7 = px.sunburst(
+    sunburst_counts,
+    path=["nation", "genre_first"],
+    values="영화 편수",
+    title="제작 국가에서 장르로 내려가는 영화 편수 분포",
+    labels={
+        "nation": "제작 국가",
+        "genre_first": "장르",
+        "영화 편수": "영화 편수"
+    }
+)
+
+fig7.update_traces(
+    hovertemplate=(
+        "<b>%{label}</b><br>"
+        "영화 편수: %{value}편"
+        "<extra></extra>"
+    )
+)
+
+fig7.update_layout(
+    margin=dict(t=70, b=30, l=20, r=20)
+)
+
+st.plotly_chart(fig7, use_container_width=True)
+
+st.markdown("#### 💡 이 그래프로 알 수 있는 것")
+
+st.write(
+    "제작 국가별 영화 편수와 각 국가의 장르 구성을 한눈에 비교할 수 있습니다. "
+    "칸의 크기가 클수록 해당 국가 또는 장르의 영화 편수가 많습니다."
+)
+
+st.caption("국가를 클릭하면 해당 국가의 장르별 구성을 자세히 볼 수 있습니다.")
+
+st.text_area(
+    "이 그래프를 보고 알게 된 점을 자유롭게 작성해 보세요.",
+    placeholder="여기에 자유롭게 작성해 보세요.",
+    height=140,
+    key="sunburst_graph_observation"
+)
